@@ -59,7 +59,7 @@ function findHighChartDataSeries(resultData) {
 function drawChart(series) {
   console.log("Drawing series:", series);
 
-  Highcharts.chart('container', {
+  window.chart = Highcharts.chart('container', {
 
     title: {
       text: 'COVID-19 data by state, starting from when they hit 100 infections'
@@ -72,14 +72,14 @@ function drawChart(series) {
     yAxis: {
       title: {
         text: 'Confirmed Cases'
-      }
+      },
     },
 
     xAxis: {
       // type: 'datetime',
       title: {
         text: 'Days since hitting 100'
-      }
+      },
     },
 
     tooltip: {
@@ -97,8 +97,8 @@ function drawChart(series) {
       series: {
         marker: {
           enabled: true
-        }
-      }
+        },
+      },
     },
 
     series,
@@ -113,12 +113,19 @@ function drawChart(series) {
             series: {
               marker: {
                 radius: 2.5
-              }
-            }
-          }
-        }
-      }]
-    }
+              },
+            },
+          },
+        },
+      }],
+    },
 
   });
+}
+
+window.onShowLogrithmic = function(event) {
+    const showLogrithmic = event.checked;
+    chart.yAxis[0].update({
+        type: showLogrithmic ? "logarithmic" : "linear",
+    });
 }
