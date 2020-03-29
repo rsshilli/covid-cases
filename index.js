@@ -1,5 +1,14 @@
 "use strict";
 
+// Fix the link to show confirmed cases if need be
+window.showDeaths = getParameterByName("showType") === "Deaths";
+if (showDeaths) {
+  let seeByLink = $("#seeBy")[0];
+  seeByLink.innerText = "See by confirmed cases";
+  seeByLink.href = "./index.html?showType=Confirmed";
+}
+
+
 Papa.parse("https://query.data.world/s/ddilsdjgnj5zsvm3ouqgbcmm4ntkxv", {
   download: true,
   header: true,
@@ -15,7 +24,8 @@ Papa.parse("https://query.data.world/s/ddilsdjgnj5zsvm3ouqgbcmm4ntkxv", {
 function findHighChartDataSeries(resultData) {
   let dataRows = resultData.filter(row =>
     row.Country_Region === "US"
-    && row.Case_Type === "Confirmed"
+    && (showDeaths ? row.Case_Type === "Deaths" : row.Case_Type === "Confirmed")
+    // To help with debugging
     // && (["Ohio", "Texas", "New York"].includes(row.Province_State))
   );
 
@@ -35,15 +45,16 @@ function findHighChartDataSeries(resultData) {
     dateToTotalMap.set(dateInMS, total + (parseInt(row.Cases) || 0));
   }
 
-  // Now put it into the format expected by HighCharts & from 100 cases
+  // Now put it into the format expected by HighCharts & pair down to the starting # of cases
   let series = [];
+  const MIN_COUNT_TO_SHOW = showDeaths ? 10 : 100;
   for (const state of [...stateToDateToTotalMap.keys()].sort()) {
     let thisStateData = {name: state, data: []};
     let dateToTotalMap = stateToDateToTotalMap.get(state);
     let datesInSortedOrder = [...dateToTotalMap.keys()].sort();
     for (const dateInMS of datesInSortedOrder) {
       let totalOnDate = dateToTotalMap.get(dateInMS) || 0;
-      if (totalOnDate >= 100) {
+      if (totalOnDate >= MIN_COUNT_TO_SHOW) {
         thisStateData.data.push(totalOnDate);
       }
     }
@@ -62,7 +73,7 @@ function drawChart(series) {
   window.chart = Highcharts.chart('container', {
 
     title: {
-      text: '<div>COVID-19 data by state, </div><div>starting from 100 infections</div>',
+      text: "<div>COVID-19 data by state, </div><div>starting from " + (showDeaths ? "10 deaths" : "100 infections") + "</div>",
       useHTML: true,
     },
 
@@ -73,14 +84,15 @@ function drawChart(series) {
 
     yAxis: {
       title: {
-        text: 'Confirmed Cases'
+        text: showDeaths ? "Deaths" : "Confirmed Cases",
       },
+      min: showDeaths ? 10 : 100,
     },
 
     xAxis: {
       // type: 'datetime',
       title: {
-        text: 'Days since hitting 100 confirmed cases'
+        text: "Days since hitting " + (showDeaths ? "10 deaths" : "100 confirmed cases"),
       },
     },
 
@@ -147,3 +159,8 @@ window.hideAllStates = function(event) {
     $("#hideAllSpinner").addClass("hide");
   }, 200)
 };
+
+function getParameterByName(name) {
+  let match = new RegExp("[?&]" + name + "=([^&]*)").exec(window.location.search);
+  return match && decodeURIComponent(match[1].replace(/\+/g, " "));
+}

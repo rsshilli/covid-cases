@@ -1,6 +1,6 @@
 .loading {
-  margin-top: 200px;
-  margin-bottom: 200px;
+  padding-top: 200px;
+  padding-bottom: 200px;
   margin-left: auto;
   margin-right: auto;
   width: 100px;
@@ -54,8 +54,8 @@
 .options {
   display: flex;
   flex-direction: column;
-  position: absolute;
-  right: 180px;
+  text-align: right;
+  width: calc(100% - 180px);
 }
 
 .show-option-div {
