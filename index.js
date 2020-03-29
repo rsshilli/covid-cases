@@ -62,7 +62,8 @@ function drawChart(series) {
   window.chart = Highcharts.chart('container', {
 
     title: {
-      text: 'COVID-19 data by state, starting from when they hit 100 infections'
+      text: '<div>COVID-19 data by state, </div><div>starting from 100 infections</div>',
+      useHTML: true,
     },
 
     subtitle: {
