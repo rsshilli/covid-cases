@@ -16,7 +16,8 @@ function findHighChartDataSeries(resultData) {
   let dataRows = resultData.filter(row =>
     row.Country_Region === "US"
     && row.Case_Type === "Confirmed"
-    && (["Ohio", "Texas", "New York"].includes(row.Province_State)));
+    // && (["Ohio", "Texas", "New York"].includes(row.Province_State))
+  );
 
   // Sort everything into a clear map
   let stateToDateToTotalMap = new Map();
@@ -31,21 +32,25 @@ function findHighChartDataSeries(resultData) {
       dateToTotalMap.set(dateInMS, 0);
     }
     let total = dateToTotalMap.get(dateInMS);
-    dateToTotalMap.set(dateInMS, total + parseInt(row.Cases));
+    dateToTotalMap.set(dateInMS, total + (parseInt(row.Cases) || 0));
   }
 
-
-  // Now put it into the format expected by HighCharts
+  // Now put it into the format expected by HighCharts & from 100 cases
   let series = [];
-  for(const state of stateToDateToTotalMap.keys()) {
+  for (const state of [...stateToDateToTotalMap.keys()].sort()) {
     let thisStateData = {name: state, data: []};
     let dateToTotalMap = stateToDateToTotalMap.get(state);
     let datesInSortedOrder = [...dateToTotalMap.keys()].sort();
-    for(const dateInMS of datesInSortedOrder) {
+    for (const dateInMS of datesInSortedOrder) {
       let totalOnDate = dateToTotalMap.get(dateInMS) || 0;
-      thisStateData.data.push([dateInMS, totalOnDate]);
+      if (totalOnDate >= 100) {
+        thisStateData.data.push(totalOnDate);
+      }
     }
-    series.push(thisStateData);
+
+    if (thisStateData.data.length > 0) {
+      series.push(thisStateData);
+    }
   }
 
   return series;
@@ -66,20 +71,20 @@ function drawChart(series) {
 
     yAxis: {
       title: {
-        text: 'Cases'
+        text: 'Confirmed Cases'
       }
     },
 
     xAxis: {
-      type: 'datetime',
+      // type: 'datetime',
       title: {
-        text: 'Date'
+        text: 'Days since hitting 100'
       }
     },
 
     tooltip: {
       headerFormat: '<b>{series.name}</b><br>',
-      pointFormat: '{point.x: %b %e, %y}: {point.y:.2f} cases'
+      pointFormat: 'Confirmed: {point.y} cases'
     },
 
     legend: {
@@ -101,7 +106,7 @@ function drawChart(series) {
     responsive: {
       rules: [{
         condition: {
-          maxWidth: 500
+          maxWidth: 2000
         },
         chartOptions: {
           plotOptions: {
