@@ -125,8 +125,24 @@ function drawChart(series) {
 }
 
 window.onShowLogrithmic = function(event) {
-    const showLogrithmic = event.checked;
-    chart.yAxis[0].update({
-        type: showLogrithmic ? "logarithmic" : "linear",
-    });
-}
+  const showLogrithmic = event.checked;
+  chart.yAxis[0].update({
+    type: showLogrithmic ? "logarithmic" : "linear",
+  });
+};
+
+window.hideAllStates = function(event) {
+  let seriesArray = chart.series;
+  console.log("There are " + seriesArray.length + " series.");
+  $("#hideAllSpinner").removeClass("hide");
+  setTimeout(() => {
+    for (const series of seriesArray) {
+      let message = "Hiding " + series.name + "...";
+      console.log(message);
+      if (series.visible) {
+        series.hide();
+      }
+    }
+    $("#hideAllSpinner").addClass("hide");
+  }, 200)
+};
