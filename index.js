@@ -66,7 +66,8 @@ function drawChart(series) {
     },
 
     subtitle: {
-      text: 'Source: Data.World (https://data.world/covid-19-data-resource-hub/covid-19-case-counts/workspace/file?filename=COVID-19+Cases.csv)'
+      text: "Source: <a href='https://data.world/covid-19-data-resource-hub/covid-19-case-counts/workspace/file?filename=COVID-19+Cases.csv'>John Hopkins via Data.World</a>",
+      useHTML: true,
     },
 
     yAxis: {
