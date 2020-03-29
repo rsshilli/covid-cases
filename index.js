@@ -7,6 +7,7 @@ if (showDeaths) {
   seeByLink.innerText = "See by confirmed cases";
   seeByLink.href = "./index.html?showType=Confirmed";
 }
+window.showCountry = getParameterByName("showCountry") || "US";
 
 
 Papa.parse("https://query.data.world/s/ddilsdjgnj5zsvm3ouqgbcmm4ntkxv", {
@@ -23,7 +24,7 @@ Papa.parse("https://query.data.world/s/ddilsdjgnj5zsvm3ouqgbcmm4ntkxv", {
 
 function findHighChartDataSeries(resultData) {
   let dataRows = resultData.filter(row =>
-    row.Country_Region === "US"
+    row.Country_Region === showCountry
     && (showDeaths ? row.Case_Type === "Deaths" : row.Case_Type === "Confirmed")
     // To help with debugging
     // && (["Ohio", "Texas", "New York"].includes(row.Province_State))
