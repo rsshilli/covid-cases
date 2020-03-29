@@ -79,7 +79,7 @@ function drawChart(series) {
     xAxis: {
       // type: 'datetime',
       title: {
-        text: 'Days since hitting 100'
+        text: 'Days since hitting 100 confirmed cases'
       },
     },
 
