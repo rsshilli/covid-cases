@@ -27,15 +27,36 @@
 
 
   <link rel="stylesheet" href="./index.css">
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-161996541-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  
+    gtag('config', 'UA-161996541-1');
+  </script>
+  
 </head>
 <body>
 <figure class="highcharts-figure">
-  <div id="container"></div>
+  <div id="container">
+      <div class="loading">
+        Loading... Please wait.
+      </div>
+  </div>
 </figure>
 <div class="show-logrithmic-div">
     <input type="checkbox" id="showLogrithmicCheckbox" onclick="window.onShowLogrithmic(this)"/>
     <label for="showLogrithmicCheckbox"> Show Logarithmic</label>
     
+</div>
+<div class="note-at-bottom">
+    Thank you Github for hosting! See the code <a href="https://github.com/rsshilli/covid-cases">here.</a>
+</div>
+<div class="note-at-bottom">
+    <i>Shameless plug:</i> My company, <a href="https://qbdvision.com">CherryCircle Software</a> has offered our pharma manufacturing knowledge management software <a href="https://www.globenewswire.com/news-release/2020/03/13/2000193/0/en/CherryCircle-Software-Offers-Its-QbDVision-Platform-for-Free-for-COVID-19-Treatment-Development.html">for free for COVID treatments. We're here to help you.</a>
 </div>
 <!-- Make magic happen -->
 <script src="./index.js"></script>

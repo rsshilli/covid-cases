@@ -1,3 +1,11 @@
+.loading {
+  margin-top: 200px;
+  margin-bottom: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100px;
+}
+
 .highcharts-figure, .highcharts-data-table table {
   min-width: 360px;
   margin: 1em auto;
@@ -31,6 +39,12 @@
 }
 
 .show-logrithmic-div {
-    float: right;
-    margin-right: 50px;
+  float: right;
+  margin-right: 180px;
 }
+
+.note-at-bottom {
+  margin: 70px;
+  width: 40%;
+}
+
