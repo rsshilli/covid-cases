@@ -1,4 +1,5 @@
 node_modules*
+covid-19-cases.csv
 
 # Gmail client secret
 # ----------

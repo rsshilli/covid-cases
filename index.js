@@ -3,23 +3,31 @@
 window.isRunningLocally = window.location.href.includes("localhost:3000");
 const covidDataURL = isRunningLocally ? "./covid-19-cases.csv" : "https://query.data.world/s/ddilsdjgnj5zsvm3ouqgbcmm4ntkxv";
 const MAX_TOP_COUNTRIES = 20;
+let loading = $("#loadingDiv").hide();
+let dimWrapper = $("#dimWrapper").hide();
+let loadingTimeout = null;
+
 
 console.time("Fetching data");
-Papa.parse(covidDataURL, {
-  download: true,
-  header: true,
-  complete: function(results) {
-    console.timeEnd("Fetching data");
-    console.log("Received results:", results);
-    window.resultData = results.data;
+showLoading(() => {
+  Papa.parse(covidDataURL, {
+    download: true,
+    header: true,
+    complete: function(results) {
+      console.timeEnd("Fetching data");
+      console.log("Received results:", results);
+      window.resultData = results.data;
 
-    window.dataAsOf = moment(resultData[0].Prep_Flow_Runtime, "MM/DD/YYYY h:mm:ss aa");
-    trimResults();
-    setupLocations();
-    let series = filterIntoHighChartSeries();
-    drawChart(series);
-  }
-});
+      showLoading(() => {
+        window.dataAsOf = moment(resultData[0].Prep_Flow_Runtime, "MM/DD/YYYY h:mm:ss aa");
+        trimResults();
+        setupLocations();
+        let series = filterIntoHighChartSeries();
+        drawChart(series);
+      });
+    }
+  });
+}, true);
 
 function trimResults() {
   console.time("Triming results");
@@ -305,12 +313,14 @@ function drawChart(series) {
 }
 
 window.updateChart = function() {
-  // Build the province & region selection options
-  updateLocations();
+  showLoading(() => {
+    // Build the province & region selection options
+    updateLocations();
 
-  // Recreate the chart
-  let series = filterIntoHighChartSeries();
-  drawChart(series);
+    // Recreate the chart
+    let series = filterIntoHighChartSeries();
+    drawChart(series);
+  });
 };
 
 window.handleProvinceStateSelected = function() {
@@ -319,6 +329,16 @@ window.handleProvinceStateSelected = function() {
   let selectedProvinceStates = getSelectedProvinceStates();
   if (selectedProvinceStates.size === 0) {
     handleSelectLocation("provinceState", "all");
+  }
+  updateChart();
+};
+
+window.handleRegionSelected = function() {
+  updateLocations();
+  // If there are no selected regions (ie. the first time they've clicked it) then select all.
+  let selectedRegions = getSelectedRegions();
+  if (selectedRegions.size === 0) {
+    handleSelectLocation("region", "all");
   }
   updateChart();
 };
@@ -430,3 +450,30 @@ function getParameterByName(name) {
   let match = new RegExp("[?&]" + name + "=([^&]*)").exec(window.location.search);
   return match && decodeURIComponent(match[1].replace(/\+/g, " "));
 }
+
+function showLoading(someFunc, expectAnotherLoad = false) {
+  if (loadingTimeout) {
+    window.clearTimeout(loadingTimeout);
+    loadingTimeout = null;
+  }
+
+  dimWrapper.stop(true, true).animate({
+    opacity: 0.8
+  }, 500);
+  dimWrapper.show();
+  loading.show();
+
+  loadingTimeout = setTimeout(() => {
+    someFunc();
+    if (!expectAnotherLoad) {
+      loading.hide();
+      dimWrapper.animate({
+        opacity: 0.0
+      }, 500);
+      setTimeout(function() {
+        dimWrapper.hide();
+      }, 500);
+    }
+  }, 500)
+}
+

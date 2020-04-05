@@ -96,3 +96,27 @@
 .hide {
   display: none;
 }
+
+.loading-div {
+  color: #666;
+  font-size: 20vh;
+  height: 120px;
+  margin-top: -100px;
+  text-align: center;
+  width: 100%;
+  z-index: 5000;
+
+  position: fixed;
+  top: 50%;
+}
+
+.loading-dim-wrapper {
+  background: #CCC;
+  width: 100%;
+  z-index: 4000;
+
+  position: fixed;
+  top: 0;
+  bottom: 0;
+}
+
